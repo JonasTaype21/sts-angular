@@ -26,7 +26,7 @@ export class SesionService {
         inject(HttpClient);
 
     private readonly apiUrl =
-        'http://localhost:8080/Proyecto_STS/api/sesion';
+    'https://proyecto-sts-backend.onrender.com/api/seguimiento';
 
     readonly sesion =
         signal<SesionApiResponse | null>(null);
