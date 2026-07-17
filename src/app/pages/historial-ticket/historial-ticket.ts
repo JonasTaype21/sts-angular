@@ -600,7 +600,7 @@ export class HistorialTicketComponent implements OnInit {
 
     if (!sesion) {
       window.location.href =
-        'http://localhost:8080/Proyecto_STS/login.jsp';
+        'https://proyecto-sts-backend.onrender.com/login.jsp';
       return;
     }
 
@@ -608,17 +608,17 @@ export class HistorialTicketComponent implements OnInit {
 
       case 'ADMIN':
         window.location.href =
-          'http://localhost:8080/Proyecto_STS/admin/dashboardAdmin.jsp';
+          'https://proyecto-sts-backend.onrender.com/admin/dashboardAdmin.jsp';
         break;
 
       case 'TECNICO':
         window.location.href =
-          'http://localhost:8080/Proyecto_STS/tecnico/dashboardTecnico.jsp?vista=tickets';
+'https://proyecto-sts-backend.onrender.com/tecnico/dashboardTecnico.jsp?vista=tickets';
         break;
 
       default:
         window.location.href =
-          'http://localhost:8080/Proyecto_STS/usuario/dashboardUsuario.jsp?vista=seguimiento';
+'https://proyecto-sts-backend.onrender.com/usuario/dashboardUsuario.jsp?vista=seguimiento';
         break;
     }
 
