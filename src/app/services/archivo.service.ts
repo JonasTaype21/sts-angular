@@ -16,9 +16,9 @@ import {
 export class ArchivoService {
 
     private readonly http = inject(HttpClient);
-
-    private readonly apiUrl =
-'https://proyecto-sts-backend.onrender.com/api/seguimiento';
+    
+private readonly apiUrl =
+'https://proyecto-sts-backend.onrender.com/api/archivos';
 
     obtenerArchivos(
         idTicket: number
