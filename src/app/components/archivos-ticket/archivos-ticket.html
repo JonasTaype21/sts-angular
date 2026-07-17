@@ -1,0 +1,278 @@
+<section class="archivos-panel">
+
+    <div class="archivos-header">
+
+        <div>
+            <span class="archivos-eyebrow">
+                Evidencias
+            </span>
+
+            <h3>Archivos adjuntos</h3>
+
+            <p>
+                Adjunta capturas, documentos PDF o evidencias
+                relacionadas con la atención del ticket.
+            </p>
+        </div>
+
+        <span class="archivos-counter">
+            {{ archivos().length }}
+
+            {{
+            archivos().length === 1
+            ? 'archivo'
+            : 'archivos'
+            }}
+        </span>
+
+    </div>
+
+    <!-- ÁREA DE SUBIDA -->
+    <section class="subida-panel">
+
+        <input #inputArchivo class="input-archivo" type="file"
+            accept=".pdf,.png,.jpg,.jpeg,application/pdf,image/png,image/jpeg" (change)="seleccionarArchivo($event)" />
+
+        @if (!archivoSeleccionado()) {
+
+        <button type="button" class="zona-seleccion" [disabled]="subiendo()" (click)="abrirSelector()">
+
+            <div class="zona-icono">
+                <i class="bi bi-cloud-arrow-up"></i>
+            </div>
+
+            <div>
+                <strong>
+                    Seleccionar una evidencia
+                </strong>
+
+                <span>
+                    PDF, PNG, JPG o JPEG · máximo 10 MB
+                </span>
+            </div>
+
+            <span class="boton-examinar">
+                Examinar archivo
+            </span>
+
+        </button>
+
+        } @else {
+
+        <div class="archivo-seleccionado">
+
+            <div class="seleccion-icono">
+                <i class="bi" [ngClass]="
+              obtenerIcono({
+                idArchivo: 0,
+                idTicket: idTicket(),
+                idUsuario: 0,
+                nombreArchivo:
+                  nombreArchivoSeleccionado(),
+                tipoArchivo: null,
+                tamanioBytes: 0,
+                tamanioLegible: '',
+                nombreUsuario: null,
+                fechaSubida: null,
+                urlDescarga: ''
+              })
+            "></i>
+            </div>
+
+            <div class="seleccion-info">
+                <strong>
+                    {{ nombreArchivoSeleccionado() }}
+                </strong>
+
+                <span>
+                    {{ tamanioSeleccionado() }}
+                </span>
+            </div>
+
+            <button type="button" class="boton-quitar" title="Quitar selección" [disabled]="subiendo()"
+                (click)="eliminarSeleccion()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+
+            <button type="button" class="boton-adjuntar" [disabled]="!archivoValido()" (click)="subirArchivo()">
+
+                @if (subiendo()) {
+                <i class="bi bi-arrow-repeat cargando"></i>
+                Subiendo...
+                } @else {
+                <i class="bi bi-paperclip"></i>
+                Adjuntar archivo
+                }
+
+            </button>
+
+        </div>
+
+        }
+
+        @if (errorSubida()) {
+        <div class="mensaje-subida error">
+            <i class="bi bi-exclamation-circle"></i>
+            {{ errorSubida() }}
+        </div>
+        }
+
+        @if (mensajeExito()) {
+        <div class="mensaje-subida exito">
+            <i class="bi bi-check-circle"></i>
+            {{ mensajeExito() }}
+        </div>
+        }
+
+    </section>
+
+    <!-- CARGANDO -->
+    @if (cargando()) {
+
+    <div class="estado-archivos">
+
+        <i class="bi bi-arrow-repeat cargando"></i>
+
+        <div>
+            <strong>
+                Cargando archivos
+            </strong>
+
+            <span>
+                Consultando evidencias registradas en MySQL...
+            </span>
+        </div>
+
+    </div>
+
+    } @else if (errorCarga()) {
+
+    <div class="estado-archivos error">
+
+        <i class="bi bi-exclamation-triangle"></i>
+
+        <div>
+            <strong>
+                No se pudieron cargar los archivos
+            </strong>
+
+            <span>
+                {{ errorCarga() }}
+            </span>
+
+            <button type="button" (click)="cargarArchivos()">
+                <i class="bi bi-arrow-clockwise"></i>
+                Volver a intentar
+            </button>
+        </div>
+
+    </div>
+
+    } @else if (archivos().length === 0) {
+
+    <div class="archivos-vacios">
+
+        <div class="vacio-icono">
+            <i class="bi bi-folder2-open"></i>
+        </div>
+
+        <h4>
+            Aún no existen archivos adjuntos
+        </h4>
+
+        <p>
+            Adjunta una captura, imagen o documento PDF
+            relacionado con este ticket.
+        </p>
+
+    </div>
+
+    } @else {
+
+    <div class="archivos-lista">
+
+        @for (
+        archivo of archivos();
+        track archivo.idArchivo
+        ) {
+
+        <article class="archivo-item">
+
+            <div class="archivo-tipo" [ngClass]="obtenerClaseTipo(archivo)">
+                <i class="bi" [ngClass]="obtenerIcono(archivo)"></i>
+            </div>
+
+            <div class="archivo-informacion">
+
+                <strong>
+                    {{ archivo.nombreArchivo }}
+                </strong>
+
+                <div class="archivo-metadatos">
+
+                    <span>
+                        <i class="bi bi-hdd"></i>
+                        {{ archivo.tamanioLegible }}
+                    </span>
+
+                    <span>
+                        <i class="bi bi-calendar3"></i>
+
+                        {{
+                        archivo.fechaSubida ||
+                        'Fecha no disponible'
+                        }}
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="archivo-autor">
+
+                <span class="autor-avatar">
+                    {{
+                    obtenerIniciales(
+                    archivo.nombreUsuario
+                    )
+                    }}
+                </span>
+
+                <div>
+                    <span>Adjuntado por</span>
+
+                    <strong>
+                        {{
+                        archivo.nombreUsuario ||
+                        'Usuario del sistema'
+                        }}
+                    </strong>
+                </div>
+
+            </div>
+
+            <button type="button" class="boton-descargar" title="Descargar archivo" [disabled]="
+              idDescargando() === archivo.idArchivo
+            " (click)="descargarArchivo(archivo)">
+
+                @if (
+                idDescargando() === archivo.idArchivo
+                ) {
+                <i class="bi bi-arrow-repeat cargando"></i>
+                } @else {
+                <i class="bi bi-download"></i>
+                }
+
+                <span>Descargar</span>
+
+            </button>
+
+        </article>
+
+        }
+
+    </div>
+
+    }
+
+</section>

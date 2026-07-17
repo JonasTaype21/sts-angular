@@ -1,0 +1,106 @@
+<section class="timeline-panel">
+
+    <div class="timeline-header">
+
+        <div>
+            <span class="timeline-eyebrow">
+                Trazabilidad
+            </span>
+
+            <h3>Historial del ticket</h3>
+
+            <p>
+                Registro cronológico de las acciones y cambios de estado.
+            </p>
+        </div>
+
+        <span class="timeline-counter">
+            {{ movimientos.length }}
+            {{ movimientos.length === 1 ? 'movimiento' : 'movimientos' }}
+        </span>
+
+    </div>
+
+    @if (movimientos.length > 0) {
+
+    <div class="timeline-list">
+
+        @for (
+        movimiento of movimientos;
+        track movimiento.id
+        ) {
+
+        <article class="timeline-item">
+
+            <div class="timeline-marker" [ngClass]="movimiento.tipo">
+                <i class="bi" [ngClass]="movimiento.icono"></i>
+            </div>
+
+            <div class="timeline-card">
+
+                <div class="timeline-card-header">
+
+                    <div>
+                        <h4>{{ movimiento.accion }}</h4>
+
+                        <span class="timeline-author">
+                            <i class="bi bi-person-circle"></i>
+                            {{ movimiento.responsable }}
+                        </span>
+                    </div>
+
+                    <time>
+                        <i class="bi bi-clock"></i>
+                        {{ movimiento.fecha }}
+                    </time>
+
+                </div>
+
+                <p class="timeline-description">
+                    {{ movimiento.comentario }}
+                </p>
+
+                <div class="timeline-transition">
+
+                    <span class="state previous">
+                        {{
+                        movimiento.estadoAnterior ||
+                        'SIN ESTADO'
+                        }}
+                    </span>
+
+                    <i class="bi bi-arrow-right"></i>
+
+                    <span class="state current">
+                        {{ movimiento.estadoNuevo }}
+                    </span>
+
+                </div>
+
+            </div>
+
+        </article>
+
+        }
+
+    </div>
+
+    } @else {
+
+    <div class="timeline-empty">
+
+        <div class="timeline-empty-icon">
+            <i class="bi bi-clock-history"></i>
+        </div>
+
+        <h4>No existen movimientos registrados</h4>
+
+        <p>
+            Las acciones aparecerán aquí cuando el ticket cambie de estado.
+        </p>
+
+    </div>
+
+    }
+
+</section>

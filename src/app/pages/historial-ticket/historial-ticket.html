@@ -1,0 +1,621 @@
+<div class="pagina-seguimiento">
+
+    @if (mostrarMensaje()) {
+    <div class="toast-sistema">
+        <i class="bi bi-check-circle-fill"></i>
+        <span>{{ mensajeSistema() }}</span>
+    </div>
+    }
+
+    <header class="barra-superior">
+
+        <div class="marca">
+            <div class="logo-sts">
+                <i class="bi bi-headset"></i>
+            </div>
+
+            <div>
+                <strong>STS</strong>
+                <span>Centro de seguimiento</span>
+            </div>
+        </div>
+
+        <div class="acciones-superiores">
+
+            <button class="boton-icono" type="button" title="Notificaciones">
+                <i class="bi bi-bell"></i>
+            </button>
+
+            <div class="usuario-actual">
+                <div class="avatar">
+                    {{ inicialesUsuario() }}
+                </div>
+
+                <div>
+                    <strong>{{ nombreUsuario() }}</strong>
+                    <span>Usuario</span>
+                </div>
+            </div>
+
+        </div>
+
+    </header>
+
+    <main class="contenido-principal">
+
+        @if (cargando()) {
+
+        <div class="estado-api cargando-api">
+            <i class="bi bi-arrow-repeat"></i>
+
+            <span>
+                Consultando información real en Java...
+            </span>
+        </div>
+
+        } @else if (errorCarga()) {
+
+        <div class="estado-api error-api">
+            <i class="bi bi-exclamation-triangle"></i>
+
+            <span>
+                {{ errorCarga() }}
+            </span>
+        </div>
+
+        } @else if (ticket(); as ticketActual) {
+
+        @if (mostrarMensajeConexion()) {
+
+        <div class="estado-api exito-api">
+            <i class="bi bi-database-check"></i>
+
+            Conexión correcta con Java y MySQL:
+
+            <strong>
+                {{ ticketActual.codigo }}
+                ·
+                {{ ticketActual.estado }}
+            </strong>
+
+        </div>
+
+        }
+
+        <section class="encabezado-ticket">
+
+            <div class="migas">
+                <span>Tickets</span>
+
+                <i class="bi bi-chevron-right"></i>
+
+                <span>{{ ticketActual.codigo }}</span>
+
+                <i class="bi bi-chevron-right"></i>
+
+                <strong>Seguimiento avanzado</strong>
+            </div>
+
+            <div class="cabecera-flex">
+
+                <div>
+
+                    <div class="codigo-linea">
+
+                        <span class="codigo-ticket">
+                            {{ ticketActual.codigo }}
+                        </span>
+
+                        <span class="estado-chip" [class.estado-resuelto]="ticketActual.estado === 'RESUELTO'"
+                            [class.estado-cerrado]="ticketActual.estado === 'CERRADO'">
+                            {{ ticketActual.estado }}
+                        </span>
+
+                    </div>
+
+                    <h1>{{ ticketActual.titulo }}</h1>
+
+                    <p>
+                        Consulta la trazabilidad, evidencias y solución técnica
+                        asociadas al ticket.
+                    </p>
+
+                </div>
+
+                <button class="boton-volver" type="button" (click)="volverAlSistema()">
+                    <i class="bi bi-arrow-left"></i>
+                    Volver al sistema STS
+                </button>
+
+            </div>
+
+        </section>
+
+        <!-- CICLO DE VIDA -->
+        <section class="tarjeta proceso-ticket">
+
+            <div class="proceso-encabezado">
+
+                <div>
+                    <span class="sobrelinea">
+                        Flujo de atención
+                    </span>
+
+                    <h2>
+                        Ciclo de vida del ticket
+                    </h2>
+                </div>
+
+                <span class="proceso-estado">
+                    Etapa actual:
+
+                    <strong>
+                        {{ ticketActual.estado }}
+                    </strong>
+                </span>
+
+            </div>
+
+            <div class="stepper">
+
+                <div class="stepper-linea"></div>
+
+                <div class="stepper-progreso" [style.width.%]="progresoEstados()"></div>
+
+                @for (
+                paso of pasos;
+                track paso.estado;
+                let indice = $index
+                ) {
+
+                <div class="paso" [class.completado]="estaCompletado(indice)" [class.activo]="estaActivo(indice)"
+                    [class.pendiente]="estaPendiente(indice)">
+
+                    <div class="paso-icono">
+
+                        @if (estaCompletado(indice)) {
+                        <i class="bi bi-check-lg"></i>
+                        } @else {
+                        <i class="bi" [ngClass]="paso.icono"></i>
+                        }
+
+                    </div>
+
+                    <div class="paso-texto">
+                        <strong>{{ paso.titulo }}</strong>
+                        <span>{{ paso.descripcion }}</span>
+                    </div>
+
+                </div>
+
+                }
+
+            </div>
+
+        </section>
+
+        <!-- INDICADORES -->
+        <section class="indicadores">
+
+            @for (
+            indicador of indicadores();
+            track indicador.titulo
+            ) {
+
+            <article class="indicador-card">
+
+                <div class="indicador-icono" [ngClass]="indicador.clase">
+                    <i class="bi" [ngClass]="indicador.icono"></i>
+                </div>
+
+                <div>
+                    <span>{{ indicador.titulo }}</span>
+                    <strong>{{ indicador.valor }}</strong>
+                </div>
+
+            </article>
+
+            }
+
+        </section>
+
+        <!-- RESUMEN -->
+        <section class="panel-resumen">
+
+            <article class="tarjeta informacion-ticket">
+
+                <div class="titulo-tarjeta">
+
+                    <div>
+                        <span class="sobrelinea">
+                            Resumen ejecutivo
+                        </span>
+
+                        <h2>
+                            Información del ticket
+                        </h2>
+                    </div>
+
+                    <i class="bi bi-info-circle"></i>
+
+                </div>
+
+                <div class="datos-grid">
+
+                    <div class="dato">
+                        <span>Solicitante</span>
+
+                        <strong>
+                            {{ ticketActual.solicitante }}
+                        </strong>
+
+                        <small>
+                            {{ ticketActual.area }}
+                        </small>
+                    </div>
+
+                    <div class="dato">
+                        <span>Técnico asignado</span>
+
+                        <strong>
+                            {{ ticketActual.tecnico }}
+                        </strong>
+
+                        @if (
+                        ticketActual.tecnico &&
+                        ticketActual.tecnico !== 'Sin técnico asignado' &&
+                        ticketActual.tecnico !== 'Pendiente de asignación'
+                        ) {
+                        <small>Soporte TI</small>
+                        }
+
+                    </div>
+
+                    <div class="dato">
+                        <span>Categoría</span>
+
+                        <strong>
+                            {{ ticketActual.categoria }}
+                        </strong>
+                    </div>
+
+                    <div class="dato">
+                        <span>Prioridad</span>
+
+                        <strong class="prioridad-alta">
+                            {{ ticketActual.prioridad }}
+                        </strong>
+                    </div>
+
+                    <div class="dato">
+                        <span>Creado</span>
+
+                        <strong>
+                            {{ ticketActual.fechaCreacion }}
+                        </strong>
+                    </div>
+
+                    <div class="dato">
+                        <span>Estado actual</span>
+
+                        <strong>
+                            {{ ticketActual.estado }}
+                        </strong>
+                    </div>
+
+                </div>
+
+                <div class="descripcion">
+                    <span>
+                        Descripción del problema
+                    </span>
+
+                    <p>
+                        {{ ticketActual.descripcion }}
+                    </p>
+                </div>
+
+            </article>
+
+            <!-- SLA -->
+            <article class="tarjeta sla-card">
+
+                <div class="titulo-tarjeta">
+
+                    <div>
+                        <span class="sobrelinea">
+                            Nivel de servicio
+                        </span>
+
+                        <h2>Control de SLA</h2>
+                    </div>
+
+                    <i class="bi bi-speedometer2"></i>
+
+                </div>
+
+                <div class="circulo-sla" [ngClass]="claseSla()" [style.--porcentaje]="ticketActual.porcentajeSla + '%'">
+
+                    <div>
+                        <strong>
+                            {{ ticketActual.porcentajeSla }}%
+                        </strong>
+
+                        <span>consumido</span>
+                    </div>
+
+                </div>
+
+                <div class="sla-detalles">
+
+                    <div>
+                        <span>Tiempo actual</span>
+
+                        <strong>
+                            {{ ticketActual.tiempoTranscurrido }}
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>Objetivo</span>
+
+                        <strong>
+                            {{ ticketActual.objetivoSla }}
+                        </strong>
+                    </div>
+
+                </div>
+
+                <div class="alerta-sla" [ngClass]="mensajeSla().clase">
+                    <i class="bi bi-info-circle"></i>
+
+                    <div>
+                        <strong>
+                            {{ mensajeSla().titulo }}
+                        </strong>
+
+                        <span>
+                            {{ mensajeSla().mensaje }}
+                        </span>
+                    </div>
+                </div>
+
+            </article>
+
+        </section>
+
+        <!-- CENTRO DE TRABAJO -->
+        <section id="centroTrabajo" class="tarjeta centro-trabajo">
+
+            <div class="centro-cabecera">
+
+                <div>
+                    <span class="sobrelinea">
+                        Espacio colaborativo
+                    </span>
+
+                    <h2>
+                        Centro de trabajo del ticket
+                    </h2>
+
+                    <p>
+                        Consulta la actividad y la solución registrada en el sistema.
+                    </p>
+                </div>
+
+                <div class="estado-conexion">
+                    <span></span>
+                    Sincronización activa
+                </div>
+
+            </div>
+
+            <nav class="tabs" aria-label="Secciones del ticket">
+
+                <button type="button" [class.activo]="pestanaActiva() === 'actividad'"
+                    (click)="cambiarPestana('actividad')">
+                    <i class="bi bi-activity"></i>
+
+                    <span>
+                        <strong>Actividad</strong>
+
+                        <small>
+                            {{ historial().length }} movimientos
+                        </small>
+                    </span>
+                </button>
+
+                <button type="button" [class.activo]="pestanaActiva() === 'comentarios'"
+                    (click)="cambiarPestana('comentarios')">
+                    <i class="bi bi-chat-left-text"></i>
+
+                    <span>
+                        <strong>Comentarios</strong>
+
+                        <small>
+                            {{ cantidadComentarios() }} mensajes
+                        </small>
+                    </span>
+                </button>
+
+                <button type="button" [class.activo]="pestanaActiva() === 'archivos'"
+                    (click)="cambiarPestana('archivos')">
+                    <i class="bi bi-paperclip"></i>
+
+                    <span>
+                        <strong>Archivos</strong>
+
+                        <small>
+                            {{ cantidadArchivos() }} evidencias
+                        </small>
+                    </span>
+                </button>
+
+                <button type="button" [class.activo]="pestanaActiva() === 'solucion'"
+                    (click)="cambiarPestana('solucion')">
+                    <i class="bi bi-shield-check"></i>
+
+                    <span>
+                        <strong>Solución</strong>
+
+                        <small>
+                            {{
+                            solucion()
+                            ? 'Registrada'
+                            : 'Pendiente'
+                            }}
+                        </small>
+                    </span>
+                </button>
+
+            </nav>
+
+            <div class="contenido-tab">
+
+                <!-- ACTIVIDAD -->
+                @if (pestanaActiva() === 'actividad') {
+
+                <app-timeline-ticket [movimientos]="historial()" />
+
+                }
+
+                <!-- COMENTARIOS -->
+
+                @if (pestanaActiva() === 'comentarios') {
+
+                <app-comentarios-ticket [idTicket]="idTicket()" [ticketCerrado]="ticketActual.estado === 'CERRADO'"
+                    (cantidadCambiada)="actualizarCantidadComentarios($event)" />
+
+
+
+                }
+
+                <!-- ARCHIVOS -->
+                @if (pestanaActiva() === 'archivos') {
+
+                <app-archivos-ticket [idTicket]="idTicket()" (cantidadCambiada)="
+    actualizarCantidadArchivos($event)
+    " />
+
+                }
+
+                <!-- SOLUCIÓN -->
+                @if (pestanaActiva() === 'solucion') {
+
+                <section class="panel-seccion solucion-seccion">
+
+                    <div class="cabecera-seccion">
+
+                        <div>
+                            <span class="sobrelinea">
+                                Resolución técnica
+                            </span>
+
+                            <h3>
+                                Solución del ticket
+                            </h3>
+                        </div>
+
+                        <span class="contador" [class.contador-verde]="solucion()">
+                            {{
+                            solucion()
+                            ? 'Registrada'
+                            : 'Pendiente'
+                            }}
+                        </span>
+
+                    </div>
+
+                    @if (solucion(); as solucionActual) {
+
+                    <div class="solucion-completada">
+
+                        <div class="solucion-banner">
+
+                            <i class="bi bi-patch-check-fill"></i>
+
+                            <div>
+                                <strong>
+                                    Ticket resuelto técnicamente
+                                </strong>
+
+                                <span>
+                                    Solución registrada por
+                                    {{ solucionActual.tecnico }}.
+                                </span>
+                            </div>
+
+                            <small>
+                                {{ solucionActual.fecha }}
+                            </small>
+
+                        </div>
+
+                        <div class="solucion-grid">
+
+                            <article>
+                                <span>Diagnóstico</span>
+
+                                <p>
+                                    {{ solucionActual.diagnostico }}
+                                </p>
+                            </article>
+
+                            <article>
+                                <span>Solución aplicada</span>
+
+                                <p>
+                                    {{ solucionActual.solucionAplicada }}
+                                </p>
+                            </article>
+
+                            <article class="ancho-completo">
+                                <span>Observaciones</span>
+
+                                <p>
+                                    {{ solucionActual.observaciones }}
+                                </p>
+                            </article>
+
+                        </div>
+
+                    </div>
+
+                    } @else {
+
+                    <div class="solucion-vacia">
+
+                        <div class="solucion-vacia-icono">
+                            <i class="bi bi-wrench-adjustable-circle"></i>
+                        </div>
+
+                        <span class="sobrelinea">
+                            Trabajo en curso
+                        </span>
+
+                        <h3>
+                            Aún no existe una solución registrada
+                        </h3>
+
+                        <p>
+                            Cuando el técnico registre el diagnóstico y la solución
+                            en Java, aparecerán automáticamente aquí.
+                        </p>
+
+                    </div>
+
+                    }
+
+                </section>
+
+                }
+
+            </div>
+
+        </section>
+
+        }
+
+    </main>
+
+</div>

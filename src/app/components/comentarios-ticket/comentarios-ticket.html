@@ -1,0 +1,227 @@
+<section class="comentarios-panel">
+
+    <div class="comentarios-header">
+
+        <div>
+            <span class="comentarios-eyebrow">
+                Colaboración
+            </span>
+
+            <h3>Comentarios del ticket</h3>
+
+            <p>
+                Registra actualizaciones, consultas o información
+                relacionada con la atención.
+            </p>
+        </div>
+
+        <span class="comentarios-counter">
+            {{ comentarios().length }}
+
+            {{
+            comentarios().length === 1
+            ? 'comentario'
+            : 'comentarios'
+            }}
+        </span>
+
+    </div>
+    @if (ticketCerrado()) {
+    <div class="comentario-cerrado-aviso">
+        <i class="bi bi-lock-fill"></i>
+
+        <div>
+            <strong>Ticket cerrado</strong>
+            <span>
+                Este ticket ya fue cerrado y no admite nuevas actualizaciones.
+            </span>
+        </div>
+    </div>
+    }
+    <!-- FORMULARIO -->
+    <div class="comentario-formulario">
+
+        <div class="formulario-icono">
+            <i class="bi bi-chat-square-text"></i>
+        </div>
+
+        <div class="formulario-contenido">
+
+            <label for="nuevoComentario">
+                Publicar una actualización
+            </label>
+
+            <div class="textarea-contenedor">
+
+                <textarea id="nuevoComentario" rows="4" [value]="textoComentario()"
+                    [disabled]="publicando() || ticketCerrado()" [attr.maxlength]="limiteCaracteres"
+                    (input)="actualizarTexto($event)"
+                    placeholder="Escribe una actualización, consulta o información relevante..."></textarea>
+
+                <div class="textarea-pie">
+
+                    <span class="contador-caracteres" [class.limite]="caracteresRestantes() <= 30">
+                        {{ textoComentario().length }}
+                        /
+                        {{ limiteCaracteres }}
+                    </span>
+
+                    <button type="button" class="boton-publicar" [disabled]="!formularioValido() || ticketCerrado()"
+                        (click)="publicarComentario()">
+
+                        @if (publicando()) {
+                        <i class="bi bi-arrow-repeat cargando"></i>
+                        Publicando...
+                        } @else {
+                        <i class="bi bi-send"></i>
+                        Publicar comentario
+                        }
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            @if (errorPublicacion()) {
+            <div class="mensaje-formulario error">
+                <i class="bi bi-exclamation-circle"></i>
+                {{ errorPublicacion() }}
+            </div>
+            }
+
+            @if (mensajeExito()) {
+            <div class="mensaje-formulario exito">
+                <i class="bi bi-check-circle"></i>
+                {{ mensajeExito() }}
+            </div>
+            }
+
+        </div>
+
+    </div>
+
+    <!-- CARGA -->
+    @if (cargando()) {
+
+    <div class="estado-comentarios">
+
+        <i class="bi bi-arrow-repeat cargando"></i>
+
+        <div>
+            <strong>Cargando comentarios</strong>
+
+            <span>
+                Consultando información registrada en MySQL...
+            </span>
+        </div>
+
+    </div>
+
+    } @else if (errorCarga()) {
+
+    <div class="estado-comentarios error">
+
+        <i class="bi bi-exclamation-triangle"></i>
+
+        <div>
+            <strong>No se pudieron cargar los comentarios</strong>
+            <span>{{ errorCarga() }}</span>
+
+            <button type="button" (click)="cargarComentarios()">
+                <i class="bi bi-arrow-clockwise"></i>
+                Volver a intentar
+            </button>
+        </div>
+
+    </div>
+
+    } @else if (comentarios().length === 0) {
+
+    <div class="comentarios-vacios">
+
+        <div class="vacio-icono">
+            <i class="bi bi-chat-left-dots"></i>
+        </div>
+
+        <h4>Aún no existen comentarios</h4>
+
+        <p>
+            Sé la primera persona en registrar una actualización
+            sobre este ticket.
+        </p>
+
+    </div>
+
+    } @else {
+
+    <div class="comentarios-lista">
+
+        @for (
+        comentario of comentarios();
+        track comentario.idComentario
+        ) {
+
+        <article class="comentario-item">
+
+            <div class="comentario-avatar">
+                {{
+                obtenerIniciales(
+                comentario.nombreUsuario
+                )
+                }}
+            </div>
+
+            <div class="comentario-cuerpo">
+
+                <div class="comentario-cabecera">
+
+                    <div>
+                        <strong>
+                            {{
+                            comentario.nombreUsuario ||
+                            'Usuario del sistema'
+                            }}
+                        </strong>
+
+                        <span class="autor-etiqueta" [ngClass]="{
+        'admin': comentario.rol === 'ADMIN',
+        'tecnico': comentario.rol === 'TECNICO',
+        'usuario': comentario.rol === 'USUARIO'
+    }">
+                            {{
+                            comentario.rol === 'ADMIN'
+                            ? 'Administrador'
+                            : comentario.rol === 'TECNICO'
+                            ? 'Técnico'
+                            : comentario.rol === 'USUARIO'
+                            ? 'Usuario'
+                            : 'Participante'
+                            }}
+                        </span>
+                    </div>
+
+                    <time>
+                        <i class="bi bi-clock"></i>
+
+                        {{
+                        comentario.fechaComentario ||
+                        'Fecha no disponible'
+                        }}
+                    </time>
+
+                </div>
+
+                <p>{{ comentario.comentario }}</p>
+
+            </div>
+
+        </article>
+
+        }
+
+    </div>
+
+    }
+
+</section>

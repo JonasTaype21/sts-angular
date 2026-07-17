@@ -1,0 +1,246 @@
+:host {
+    display: block;
+}
+
+.timeline-panel {
+    width: 100%;
+}
+
+.timeline-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.timeline-eyebrow {
+    display: block;
+    margin-bottom: 6px;
+    color: #2563eb;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.timeline-header h3 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 21px;
+}
+
+.timeline-header p {
+    margin: 7px 0 0;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.timeline-counter {
+    flex-shrink: 0;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.timeline-list {
+    position: relative;
+    padding-left: 22px;
+}
+
+.timeline-list::before {
+    content: "";
+    position: absolute;
+    top: 16px;
+    bottom: 16px;
+    left: 19px;
+    width: 2px;
+    background: linear-gradient(to bottom,
+            #bfdbfe,
+            #dbeafe);
+}
+
+.timeline-item {
+    position: relative;
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.timeline-item:last-child {
+    margin-bottom: 0;
+}
+
+.timeline-marker {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    width: 38px;
+    height: 38px;
+    place-items: center;
+    border: 4px solid #ffffff;
+    border-radius: 50%;
+    background: #dbeafe;
+    color: #2563eb;
+    box-shadow: 0 0 0 1px #bfdbfe;
+}
+
+.timeline-marker.asignado {
+    background: #ede9fe;
+    color: #7c3aed;
+    box-shadow: 0 0 0 1px #ddd6fe;
+}
+
+.timeline-marker.proceso {
+    background: #ffedd5;
+    color: #ea580c;
+    box-shadow: 0 0 0 1px #fed7aa;
+}
+
+.timeline-marker.resuelto {
+    background: #dcfce7;
+    color: #16a34a;
+    box-shadow: 0 0 0 1px #bbf7d0;
+}
+
+.timeline-marker.cerrado {
+    background: #e2e8f0;
+    color: #475569;
+    box-shadow: 0 0 0 1px #cbd5e1;
+}
+
+.timeline-card {
+    min-width: 0;
+    padding: 17px 18px;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    background: #ffffff;
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.timeline-card:hover {
+    transform: translateY(-2px);
+    border-color: #bfdbfe;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+}
+
+.timeline-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 18px;
+}
+
+.timeline-card-header h4 {
+    margin: 0 0 7px;
+    color: #0f172a;
+    font-size: 15px;
+}
+
+.timeline-author {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #64748b;
+    font-size: 12px;
+}
+
+.timeline-card-header time {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 6px;
+    color: #94a3b8;
+    font-size: 11px;
+}
+
+.timeline-description {
+    margin: 14px 0;
+    color: #475569;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.timeline-transition {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 9px;
+}
+
+.timeline-transition>i {
+    color: #94a3b8;
+    font-size: 12px;
+}
+
+.state {
+    padding: 5px 9px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.state.previous {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.state.current {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.timeline-empty {
+    padding: 44px 24px;
+    border: 1px dashed #cbd5e1;
+    border-radius: 18px;
+    background: #f8fafc;
+    text-align: center;
+}
+
+.timeline-empty-icon {
+    display: grid;
+    width: 54px;
+    height: 54px;
+    margin: 0 auto 14px;
+    place-items: center;
+    border-radius: 16px;
+    background: #eff6ff;
+    color: #2563eb;
+    font-size: 23px;
+}
+
+.timeline-empty h4 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 16px;
+}
+
+.timeline-empty p {
+    margin: 8px 0 0;
+    color: #64748b;
+    font-size: 13px;
+}
+
+@media (max-width: 700px) {
+
+    .timeline-header,
+    .timeline-card-header {
+        flex-direction: column;
+    }
+
+    .timeline-card-header time {
+        white-space: normal;
+    }
+
+    .timeline-counter {
+        align-self: flex-start;
+    }
+}

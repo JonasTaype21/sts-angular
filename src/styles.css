@@ -1,0 +1,23 @@
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+
+html,
+body {
+    min-height: 100%;
+    margin: 0;
+}
+
+body {
+    font-family:
+        Inter,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+    background: #f4f7fb;
+}
+
+button,
+input,
+textarea,
+select {
+    font-family: inherit;
+}
