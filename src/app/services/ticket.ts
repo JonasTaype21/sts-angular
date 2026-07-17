@@ -12,7 +12,7 @@ export class TicketService {
     private readonly http = inject(HttpClient);
 
     private readonly apiUrl =
-'https://proyecto-sts-backend.onrender.com/api/sesion';
+'https://proyecto-sts-backend.onrender.com/api/seguimiento';
 
     obtenerSeguimiento(idTicket: number): Observable<SeguimientoApiResponse> {
 

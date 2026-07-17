@@ -19,7 +19,7 @@ export class ComentarioService {
     private readonly http = inject(HttpClient);
 
     private readonly apiUrl =
-'https://proyecto-sts-backend.onrender.com/api/sesion';
+'https://proyecto-sts-backend.onrender.com/api/seguimiento';
 
     obtenerComentarios(
         idTicket: number
